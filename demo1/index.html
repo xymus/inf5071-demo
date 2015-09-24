@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Demo 1</title>
+		<script src="phaser.min.js"></script>
+	</head>
+	<body>
+	<script type="text/javascript">
+
+	window.onload = function() {
+
+		var game = new Phaser.Game(300, 200, Phaser.AUTO, '',
+			{preload: preload, create: create, update: update});
+
+		function preload() {
+			game.load.image('ball', 'assets/ball.png');
+			game.load.image('wall_h', 'assets/wall_h.png');
+			game.load.image('wall_v', 'assets/wall_v.png');
+		}
+
+		function create() {
+			game.stage.backgroundColor = '#aaaaaa';
+
+			// Murs
+			walls = game.add.group();
+			walls.enableBody = true;
+			t = walls.create(0, 0, 'wall_h');
+			l = walls.create(0, 0, 'wall_v');
+			b = walls.create(0, 170, 'wall_h');
+			r = walls.create(270, 0, 'wall_v');
+
+			// Balle
+			ball = game.add.sprite(game.world.centerX, game.world.centerY, 'ball');
+			ball.anchor.set(0.5, 0.5);
+			game.physics.enable(ball, Phaser.Physics.ARCADE);
+
+			// Protype, limiter la balle à l'écran
+			//ball.body.collideWorldBounds = true;
+
+			// Vitesse initiale
+			// horizontal, vertical
+			ball.body.velocity.set(100, 100);
+
+			// Les murs sont immobiles
+			arr = [t, l, b, r];
+			for (i in arr) {
+				wall = arr[i];
+				wall.body.immovable = true;
+			}
+
+			// Bonus!
+			// Énergie conservée au rebond
+			ball.body.bounce.setTo(0.85);
+
+			// Bonus!
+			// Gravité
+			ball.body.gravity.setTo(0, 200);
+		}
+
+		function update() {
+			game.physics.arcade.collide(ball, walls);
+		}
+	};
+
+	</script>
+	</body>
+</html>
