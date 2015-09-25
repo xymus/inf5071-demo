@@ -86,13 +86,13 @@ function create() {
 function update() {
     var colors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF00FF, 0x00FFFF];
     var elapsed = game.time.elapsed / 1000; // Temps écoulé en secondes
-    var angularSpeed = Math.PI;             // Vitesse angulaire en radian/seconde
+    var angularSpeed = Math.PI/2;             // Vitesse angulaire en radian/seconde
     var direction = (game.time.time / 1000) % 10 < 5 ? 1 : -1;
     if ((game.time.time - colorChangeTime) / 1000 > 3) {
         scene.color = colors[Math.floor(Math.random() * colors.length)]
         colorChangeTime = game.time.time;
     }
     scene.angle += direction * elapsed * angularSpeed;
-    scene.radius = 5 * Math.random() + 50;
+    scene.radius = 50; // + 2 * Math.random();
     scene.update();
 }
