@@ -38,6 +38,20 @@ function Scene (graphics, angle, radius, color) {
     this.angle = angle;
     this.radius = radius;
     this.color = color;
+
+    this.obstacles = [new Obstacle(), new Obstacle(),
+                      new Obstacle(), new Obstacle(), new Obstacle()];
+}
+
+function Obstacle() {
+    this.zone = Math.floor(6 * Math.random());
+    this.colorMod = -0.3;
+    this.dist = 12.0;
+    this.depth = 1.0;
+
+    this.update = function () {
+        this.dist -= 0.1;
+    }
 }
 
 Scene.prototype.drawZone = function (angle, color) {
@@ -54,6 +68,32 @@ Scene.prototype.drawZone = function (angle, color) {
     this.graphics.endFill();
 }
 
+Scene.prototype.drawObstacle = function (obs) {
+    angle = this.angle + obs.zone * Math.PI / 3
+    inner = obs.dist
+    outer = obs.dist + obs.depth
+    if (inner < 1.0) inner = 1.0
+
+    var color = Phaser.Color.updateValue(this.color, obs.colorMod);
+
+    this.graphics.lineStyle(0, color, 1);
+    this.graphics.moveTo(inner * this.radius * Math.cos(angle),
+                         inner * this.radius * Math.sin(angle));
+    this.graphics.beginFill(color);
+    this.graphics.lineTo(outer * this.radius * Math.cos(angle),
+                         outer * this.radius * Math.sin(angle));
+    this.graphics.lineTo(outer * this.radius * Math.cos(angle + Math.PI / 3),
+                         outer * this.radius * Math.sin(angle + Math.PI / 3));
+    this.graphics.lineTo(inner * this.radius * Math.cos(angle + Math.PI / 3),
+                         inner * this.radius * Math.sin(angle + Math.PI / 3));
+
+    // Pour la ligne seulement
+    this.graphics.lineTo(inner * this.radius * Math.cos(angle),
+                         inner * this.radius * Math.sin(angle));
+
+    this.graphics.endFill();
+}
+
 Scene.prototype.update = function () {
     this.graphics.clear();
     this.graphics.x = game.cx;
@@ -67,6 +107,18 @@ Scene.prototype.update = function () {
     this.drawZone(this.angle + 3 * Math.PI / 3, lightColor);
     this.drawZone(this.angle + 4 * Math.PI / 3, darkColor);
     this.drawZone(this.angle + 5 * Math.PI / 3, lightColor);
+
+    for (i in this.obstacles) {
+        var obs = this.obstacles[i];
+        obs.update();
+
+        if (obs.dist + obs.depth <= 1.0) {
+            this.obstacles[i] = new Obstacle();
+        }
+
+        this.drawObstacle(obs);
+    }
+
     // Polygon
     this.graphics.lineStyle(5, this.color, 1);
     this.graphics.drawRegularPolygon(0, 0, 6, this.radius, this.angle);
