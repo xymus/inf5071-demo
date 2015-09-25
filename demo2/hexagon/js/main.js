@@ -55,7 +55,7 @@ function Obstacle() {
 }
 
 Scene.prototype.drawZone = function (angle, color) {
-    this.graphics.lineStyle(0, color, 1);
+    this.graphics.lineStyle(5, color, 1);
     this.graphics.moveTo(this.radius * Math.cos(angle),
                          this.radius * Math.sin(angle));
     this.graphics.beginFill(color);
@@ -76,7 +76,7 @@ Scene.prototype.drawObstacle = function (obs) {
 
     var color = Phaser.Color.updateValue(this.color, obs.colorMod);
 
-    this.graphics.lineStyle(0, color, 1);
+    this.graphics.lineStyle(5, color, 1);
     this.graphics.moveTo(inner * this.radius * Math.cos(angle),
                          inner * this.radius * Math.sin(angle));
     this.graphics.beginFill(color);
