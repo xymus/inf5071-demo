@@ -8,6 +8,10 @@ game.cy = game.height / 2;
 var scene;
 var colorChangeTime;
 
+// Flèches du clavier
+var leftKey;
+var rightKey;
+
 // ----- //
 // Utils //
 // ----- //
@@ -153,6 +157,23 @@ Scene.prototype.update = function () {
         this.drawObstacle(obs);
     }
 
+
+    if (this.playerLive) {
+        this.drawPlayer();
+
+        if (leftKey.isDown == rightKey.isDown) {
+            this.playerSpeed = 0.0;
+        } else if (leftKey.isDown) {
+            this.playerSpeed = -this.playerSpeedMax;
+        } else if (rightKey.isDown) {
+            this.playerSpeed = this.playerSpeedMax;
+        }
+    }
+
+    scene.playerAngle += this.playerSpeed * game.time.elapsedMS;
+    scene.playerAngle %= Math.PI * 2;
+    if (scene.playerAngle < 0.0) scene.playerAngle += Math.PI * 2;
+
     // Polygon
     this.graphics.lineStyle(5, this.color, 1);
     this.graphics.drawRegularPolygon(0, 0, 6, this.radius, this.angle);
@@ -167,6 +188,9 @@ function preload() {
 function create() {
     scene = new Scene(game.add.graphics(), 0, 50, 0xFF00FF);
     colorChangeTime = game.time.time;
+
+    leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+    rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 }
 
 function update() {
