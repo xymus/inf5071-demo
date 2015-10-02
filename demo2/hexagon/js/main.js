@@ -41,6 +41,11 @@ function Scene (graphics, angle, radius, color) {
 
     this.obstacles = [new Obstacle(), new Obstacle(),
                       new Obstacle(), new Obstacle(), new Obstacle()];
+
+    this.playerAngle = 0.0;
+    this.playerLive = true;
+    this.playerSpeed = 0.0
+    this.playerSpeedMax = 0.005
 }
 
 function Obstacle() {
@@ -51,6 +56,12 @@ function Obstacle() {
 
     this.update = function () {
         this.dist -= 0.1;
+    }
+
+    this.collide = function (playerAngle) {
+        return this.dist < 1.4 &&
+            playerAngle >= this.zone *    Math.PI / 3 &&
+            playerAngle < (this.zone+1) * Math.PI / 3;
     }
 }
 
@@ -94,6 +105,24 @@ Scene.prototype.drawObstacle = function (obs) {
     this.graphics.endFill();
 }
 
+Scene.prototype.drawPlayer = function () {
+    var color = Phaser.Color.updateValue(this.color, -0.2);
+    var angle = this.angle + this.playerAngle;
+    var width = Math.PI / 40;
+
+    this.graphics.lineStyle(5, color, 1);
+    this.graphics.moveTo(1.2 * this.radius * Math.cos(angle - width),
+                         1.2 * this.radius * Math.sin(angle - width));
+    this.graphics.beginFill(color);
+    this.graphics.lineTo(1.3 * this.radius * Math.cos(angle),
+                         1.3 * this.radius * Math.sin(angle));
+    this.graphics.lineTo(1.2 * this.radius * Math.cos(angle + width),
+                         1.2 * this.radius * Math.sin(angle + width));
+    this.graphics.lineTo(1.2 * this.radius * Math.cos(angle - width),
+                         1.2 * this.radius * Math.sin(angle - width));
+    this.graphics.endFill();
+}
+
 Scene.prototype.update = function () {
     this.graphics.clear();
     this.graphics.x = game.cx;
@@ -110,6 +139,11 @@ Scene.prototype.update = function () {
 
     for (i in this.obstacles) {
         var obs = this.obstacles[i];
+        var collision = obs.collide(this.playerAngle);
+        if (this.playerLive && collision) {
+            this.playerLive = false;
+        }
+
         obs.update();
 
         if (obs.dist + obs.depth <= 1.0) {
