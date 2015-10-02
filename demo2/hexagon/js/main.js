@@ -50,6 +50,13 @@ function Scene (graphics, angle, radius, color) {
     this.playerLive = true;
     this.playerSpeed = 0.0
     this.playerSpeedMax = 0.005
+
+    this.particleWave = game.add.sprite(-200, -200, 'wave');
+    this.particleWave.anchor.set(0.5, 0.5);
+
+    this.particleLost = game.add.sprite(game.world.centerX, game.world.centerY, 'lost');
+    this.particleLost.alpha = 0.0;
+    this.particleLost.anchor.set(0.5, 0.5);
 }
 
 function Obstacle() {
@@ -146,17 +153,45 @@ Scene.prototype.update = function () {
         var collision = obs.collide(this.playerAngle);
         if (this.playerLive && collision) {
             this.playerLive = false;
+
+            this.particleLost.x = game.world.centerX;
+            this.particleLost.y = game.world.centerY;
+            this.particleLost.alpha = 0.0;
+
+            var tween = game.add.tween(this.particleLost);
+            tween.to({alpha: 1.0}, 2000);
+            tween.easing(Phaser.Easing.Sinusoidal.In);
+            tween.start();
+
+            var tweenScale = game.add.tween(this.particleLost.scale);
+            tweenScale.to({x: 2.0, y: 2.0}, 2000);
+            tweenScale.easing(Phaser.Easing.Sinusoidal.In);
+            tweenScale.start();
         }
 
         obs.update();
 
         if (obs.dist + obs.depth <= 1.0) {
+            if (this.playerLive) {
+                this.particleWave.x = game.world.centerX;
+                this.particleWave.y = game.world.centerY;
+                this.particleWave.alpha = 0.0;
+
+                var tween = game.add.tween(this.particleWave);
+                tween.to({y: -100, alpha: 1.0}, 2000);
+                tween.easing(Phaser.Easing.Sinusoidal.In);
+                tween.start();
+            }
+
             this.obstacles[i] = new Obstacle();
         }
 
         this.drawObstacle(obs);
     }
 
+    var particleColor = Phaser.Color.updateValue(this.color, -0.1);
+    this.particleWave.tint = particleColor;
+    this.particleLost.tint = particleColor;
 
     if (this.playerLive) {
         this.drawPlayer();
@@ -183,6 +218,8 @@ Scene.prototype.update = function () {
 // Main functions //
 // -------------- //
 function preload() {
+    game.load.image('wave', 'assets/wave.png');
+    game.load.image('lost', 'assets/lost.png');
 }
 
 function create() {
@@ -196,6 +233,10 @@ function create() {
     spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     spacebar.onDown.add(function onDown() {
         if (scene.playerLive) return;
+
+        scene.particleWave.destroy();
+        scene.particleLost.destroy();
+
         scene = new Scene(graphics, 0, 50, 0xFF00FF);
         colorChangeTime = game.time.time;
     }, this);
