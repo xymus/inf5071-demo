@@ -186,11 +186,19 @@ function preload() {
 }
 
 function create() {
-    scene = new Scene(game.add.graphics(), 0, 50, 0xFF00FF);
+    var graphics = game.add.graphics();
+    scene = new Scene(graphics, 0, 50, 0xFF00FF);
     colorChangeTime = game.time.time;
 
     leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
     rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+
+    spacebar = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    spacebar.onDown.add(function onDown() {
+        if (scene.playerLive) return;
+        scene = new Scene(graphics, 0, 50, 0xFF00FF);
+        colorChangeTime = game.time.time;
+    }, this);
 }
 
 function update() {
