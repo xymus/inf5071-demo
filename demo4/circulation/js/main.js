@@ -3,7 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game',
 
 function preload() {
     
-    game.load.image('light', 'assets/light.png');
+    game.load.image('lumiere', 'assets/lumiere.png');
     game.load.image('arriere', 'assets/arriere.png');
 }
 
@@ -15,17 +15,17 @@ function create() {
     arriere.anchor.set(0.5, 0.5)
 
     // Sprites des lumières
-    var lumRouge = game.add.sprite(200, 100, 'light');
+    var lumRouge = game.add.sprite(200, 100, 'lumiere');
     lumRouge.anchor.set(0.5, 0.5)
     lumRouge.tint = 0xff0000
     lumRouge.alpha = 0.0
 
-    var lumJaune = game.add.sprite(200, 140, 'light');
+    var lumJaune = game.add.sprite(200, 140, 'lumiere');
     lumJaune.tint = 0xffff00
     lumJaune.anchor.set(0.5, 0.5)
     lumJaune.alpha = 0.0
 
-    var lumVert = game.add.sprite(200, 180, 'light');
+    var lumVert = game.add.sprite(200, 180, 'lumiere');
     lumVert.tint = 0x00ff00
     lumVert.anchor.set(0.5, 0.5)
     lumVert.alpha = 0.0
