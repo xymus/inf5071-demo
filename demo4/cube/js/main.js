@@ -12,7 +12,7 @@ animateScene();
 function initializeScene(){ 
     // Initialisation du canvas
     renderer = new THREE.WebGLRenderer({antialias: true}); 
-    renderer.setClearColor(0x000000, 1); 
+    renderer.setClearColor(0x000000, 3); 
     canvasWidth = 800; 
     canvasHeight = 600; 
     renderer.setSize(canvasWidth, canvasHeight); 
@@ -20,7 +20,7 @@ function initializeScene(){
 
     // Initialisation de la scène et de la caméra
     scene = new THREE.Scene(); 
-    camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 1, 100); 
+    camera = new THREE.PerspectiveCamera(70, canvasWidth / canvasHeight, 1, 100); 
     camera.position.set(0, 2 * distance / 3, distance); 
     camera.lookAt(scene.position); 
     scene.add(camera); 
@@ -34,8 +34,7 @@ function initializeScene(){
     floorGeometry.faces.push(new THREE.Face3(0, 1, 2)); 
     floorGeometry.faces.push(new THREE.Face3(0, 2, 3)); 
     var floorMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0x202020, 
-        side: THREE.DoubleSide,
+        color: 0x505050, 
     }); 
     var floorMesh = new THREE.Mesh(floorGeometry, floorMaterial); 
     floorMesh.position.set(0, 0, 0); 
@@ -54,6 +53,18 @@ function initializeScene(){
     var boxMaterial = new THREE.MeshFaceMaterial(boxMaterials); 
     boxMesh = new THREE.Mesh(boxGeometry, boxMaterial); 
     boxMesh.position.set(0, 0.5, 0); 
+    scene.add(boxMesh); 
+
+    boxGeometry = new THREE.BoxGeometry(1, 1, 1); 
+    boxMaterial = new THREE.MeshBasicMaterial({color: 0x001188}); 
+    boxMesh = new THREE.Mesh(boxGeometry, boxMaterial); 
+    boxMesh.position.set(0, 1.5, 0); 
+    scene.add(boxMesh); 
+
+    boxGeometry = new THREE.BoxGeometry(1, 1, 1); 
+    boxMaterial = new THREE.MeshBasicMaterial({wireframe: true}); 
+    boxMesh = new THREE.Mesh(boxGeometry, boxMaterial); 
+    boxMesh.position.set(1, 0.5, 0); 
     scene.add(boxMesh); 
 } 
 
