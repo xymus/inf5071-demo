@@ -3,7 +3,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game',
 
 function preload() {
     
-    game.load.image('light', 'assets/light.png');
+    game.load.image('lumiere', 'assets/lumiere.png');
 }
 
 function create() {
@@ -12,17 +12,17 @@ function create() {
     game.stage.backgroundColor = '#ffffff';
 
     // Sprites
-    var sprite = game.add.sprite(100, 100, 'light');
+    var sprite = game.add.sprite(100, 100, 'lumiere');
     sprite.anchor.set(0.5, 0.5)
     sprite.tint = 0xff0000
 
     // Tweens
-    var tween = game.add.tween(sprite).to({
-    x: [100, 600, 200, 700],
-    y: [100, 100, 500, 500],
-    }, 5000, Phaser.Easing.Quadratic.InOut, true).interpolation(function(v, k){
-        return Phaser.Math.bezierInterpolation(v, k);
-    });
-    tween.repeat(-1);
-    tween.start();
+    var tween = game.add.tween(sprite)
+    .to({
+        x: [100, 600, 200, 700],
+        y: [100, 100, 500, 500],
+    }, 5000) // , Phaser.Easing.Cubic.InOut)
+    .interpolation(Phaser.Math.bezierInterpolation)
+    .repeat(-1)
+    .start();
 }
