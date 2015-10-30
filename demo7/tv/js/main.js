@@ -1,0 +1,83 @@
+// Variables globales
+var scene; 
+var camera; 
+var distance = 5;
+
+var texture
+
+// Initialisation de la scène
+initializeScene(); 
+
+// Animation de la scène
+animateScene(); 
+
+function initializeScene(){ 
+    // Initialisation du canvas
+    renderer = new THREE.WebGLRenderer({antialias: true}); 
+    renderer.setClearColor(0x000000, 3); 
+    canvasWidth = 800; 
+    canvasHeight = 600; 
+    renderer.setSize(canvasWidth, canvasHeight); 
+    document.getElementById("canvas").appendChild(renderer.domElement); 
+
+    // Initialisation de la scène et de la caméra
+    scene = new THREE.Scene(); 
+    camera = new THREE.PerspectiveCamera(70, canvasWidth / canvasHeight, 1, 100); 
+    camera.position.set(0, 2 * distance / 3, distance); 
+    camera.lookAt(scene.position); 
+    scene.add(camera); 
+
+    // Création du sol
+    var floorGeometry = new THREE.Geometry(); 
+    floorGeometry.vertices.push(new THREE.Vector3(-5.0, 0.0,  5.0)); 
+    floorGeometry.vertices.push(new THREE.Vector3( 5.0, 0.0,  5.0)); 
+    floorGeometry.vertices.push(new THREE.Vector3( 5.0, 0.0, -5.0)); 
+    floorGeometry.vertices.push(new THREE.Vector3(-5.0, 0.0, -5.0)); 
+    floorGeometry.faces.push(new THREE.Face3(0, 1, 2)); 
+    floorGeometry.faces.push(new THREE.Face3(0, 2, 3)); 
+    var floorMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0x505050, 
+    }); 
+    var floorMesh = new THREE.Mesh(floorGeometry, floorMaterial); 
+    floorMesh.position.set(0, 0, 0); 
+    scene.add(floorMesh); 
+
+	// Préparer la texture
+	texture = THREE.ImageUtils.loadTexture("assets/flame.png");
+	texture.repeat.x = 0.25;
+
+    // Création du cube
+    var boxGeometry = new THREE.BoxGeometry(1, 1, 1); 
+    var boxMaterials = [ 
+        new THREE.MeshBasicMaterial({map: texture}), 
+        new THREE.MeshBasicMaterial({map: texture}), 
+        new THREE.MeshBasicMaterial({color: 0x222244}), 
+        new THREE.MeshBasicMaterial({map: texture}), 
+        new THREE.MeshBasicMaterial({map: texture}), 
+        new THREE.MeshBasicMaterial({map: texture})
+    ]; 
+    var boxMaterial = new THREE.MeshFaceMaterial(boxMaterials); 
+    boxMesh = new THREE.Mesh(boxGeometry, boxMaterial); 
+    boxMesh.position.set(0, 0.5, 0); 
+    scene.add(boxMesh); 
+} 
+
+var next_frame = 0
+function animateScene() { 
+    var timer = new Date().getTime() * 0.0005;
+    camera.position.x = -distance * Math.cos(timer);
+    camera.position.z = distance * Math.sin(timer);
+    camera.lookAt(scene.position); 
+    requestAnimationFrame(animateScene); 
+    renderScene(); 
+
+	if (timer > next_frame) {
+		next_frame = timer + 0.1;
+		texture.offset.x += 0.25;
+		if (texture.offset.x >= 1.0) texture.offset.x = 0
+	}
+} 
+
+function renderScene(){ 
+    renderer.render(scene, camera); 
+} 
