@@ -1,0 +1,35 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+    <title>Application d'une texture sur un plan</title> 
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="../../three.min.js"></script> 
+    <script id="shader-vs" type="x-shader/x-vertex">
+	  attribute vec2 texCoord;
+	  varying vec2 varTexCoord;
+
+      void main() {
+		  varTexCoord = texCoord;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    </script>
+    <script id="shader-fs" type="x-shader/x-fragment">
+	  varying vec2 varTexCoord;
+	  uniform sampler2D texture;
+
+      void main() {
+          gl_FragColor = texture2D(texture, varTexCoord);
+
+          // Noir et blanc
+		  float sum = gl_FragColor.x + gl_FragColor.y + gl_FragColor.z;
+		  float avg = sum/3.0;
+		  gl_FragColor = vec4(avg, avg, avg, 1.0);
+      }
+    </script>
+  </head> 
+  <body>
+    <div id="canvas"></div>
+    <script src="js/main.js"></script> 
+  </body> 
+</html>
