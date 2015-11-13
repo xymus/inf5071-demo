@@ -1,0 +1,36 @@
+<!DOCTYPE html> 
+<html>
+  <head>
+	<title>Application d'une texture sur une sphère</title> 
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="css/style.css">
+	<script src="../../three.min.js"></script> 
+	<script id="shader-vs" type="x-shader/x-vertex">
+		// Coordonnées adaptées à la texture, entre 0 et 1
+		attribute vec2 uvs;
+
+		varying vec3 vNormal;
+		varying vec2 vUvs;
+
+		void main() {
+			vNormal = normal;
+			vUvs = uvs;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+		}
+	</script>
+	<script id="shader-fs" type="x-shader/x-fragment">
+		varying vec3 vNormal;
+		varying vec2 vUvs;
+
+		uniform sampler2D texture;
+
+		void main() {
+			gl_FragColor = texture2D(texture, vec2(1.0,1.0) - vUvs);
+		}
+	</script>
+  </head> 
+  <body>
+	<div id="canvas"></div>
+	<script src="js/main.js"></script> 
+  </body> 
+</html>
