@@ -27,8 +27,8 @@ function initializeScene(){
 
 	// Sphère et config
 	var geometry = new THREE.Geometry();
-	var w = 36;
-	var h = 24;
+	var w = 180;
+	var h = 120;
 	var r = 5.0;
 
 	// Vertices
@@ -49,12 +49,6 @@ function initializeScene(){
 				r * Math.sin(u) * Math.sin(v));
 			geometry.vertices.push(vec);
 
-			// Alternative, pas une spère
-			//vec = new THREE.Vector3(
-				//r * (1+Math.cos(v)) * Math.cos(u),
-				//r * (1+Math.cos(v)) * Math.sin(u),
-				//r * Math.sin(v));
-
 			// UV entre 0 et 1 pour la texture
 			uvs.push(new THREE.Vector2(m/(w-1), p/(h-1)));
 		}
@@ -69,14 +63,21 @@ function initializeScene(){
 		}
 	}
 
+	geometry.computeFaceNormals();
+
 	// Shaders
 	var vertexShader = document.getElementById("shader-vs").innerHTML;
 	var fragmentShader = document.getElementById("shader-fs").innerHTML;
 
 	var uniforms = {
-		texture: {type: "t", value: THREE.ImageUtils.loadTexture("assets/earth.jpg")}
+		texture:		{type: "t", value: THREE.ImageUtils.loadTexture("assets/earth.jpg")},
+		reflectiveSurface:{type: "t", value: THREE.ImageUtils.loadTexture("assets/seas.png")},
+		ambientColor:	{type: "v4", value: new THREE.Vector4(0.1, 0.1, 0.1, 1.0)},
+		diffuseColor:	{type: "v4", value: new THREE.Vector4(0.7, 0.7, 0.7, 1.0)},
+		specularColor:	{type: "v4", value: new THREE.Vector4(0.8, 0.8, 0.8, 1.0)},
+		lightSource:	{type: "v3", value: new THREE.Vector3(1.0, 0.5, 1.0)},
+		camera:			{type: "v3", value: camera.position}
 	};
-
 	var attributes = {
 		uvs: {type: 'v2', value: uvs}
 	};

@@ -6,26 +6,64 @@
 	<link rel="stylesheet" href="css/style.css">
 	<script src="../../three.min.js"></script> 
 	<script id="shader-vs" type="x-shader/x-vertex">
-		// Coordonnées adaptées à la texture, entre 0 et 1
 		attribute vec2 uvs;
 
 		varying vec3 vNormal;
+		varying vec3 vOriginalPos;
 		varying vec2 vUvs;
 
 		void main() {
 			vNormal = normal;
+			vOriginalPos = position;
 			vUvs = uvs;
 			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 		}
 	</script>
 	<script id="shader-fs" type="x-shader/x-fragment">
+		// Variables interpolées
 		varying vec3 vNormal;
-		varying vec2 vUvs;
+		varying vec3 vOriginalPos;
+		varying vec2 vUvs; // Format texture, entre 0 et 1
 
+		// Texture de la terre et des surfaces réfléchissantes
 		uniform sampler2D texture;
+		uniform sampler2D reflectiveSurface;
+
+		// Couleur des lumières
+		uniform vec4 ambientColor;
+		uniform vec4 diffuseColor;
+		uniform vec4 specularColor;
+
+		// Position de la lumière et de la camera
+		// Dans les coordonnées d'origines
+		uniform vec3 lightSource;
+		uniform vec3 camera;
 
 		void main() {
-			gl_FragColor = texture2D(texture, vec2(1.0,1.0) - vUvs);
+			vec3 normal = normalize(vNormal);
+			vec3 lightDir = normalize(lightSource); // soleil
+
+			// Lambert diffusion
+			float lambert = max(dot(lightDir, normal), 0.0);
+
+			// Phong specular
+			vec3 toCamera = normalize(camera - vOriginalPos);
+			vec3 lightReflect = reflect(-lightDir, normal);
+			float specularAngle = max(dot(lightReflect, toCamera), 0.0);
+			float specular = pow(specularAngle, 16.0);
+
+			// Coordonnées sur les textures
+			vec2 texCoord = vec2(1.0, 1.0) - vUvs;
+
+			// Total
+			gl_FragColor = texture2D(texture, texCoord);
+
+			// Version simple
+			// gl_FragColor *= ambientColor + lambert * diffuseColor + specular * specularColor;
+
+			// Version avec les mers réfléchisantes
+			gl_FragColor *= ambientColor + lambert * diffuseColor;
+			gl_FragColor += specular * specularColor * texture2D(reflectiveSurface, texCoord);
 		}
 	</script>
   </head> 
