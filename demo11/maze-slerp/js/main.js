@@ -61,10 +61,10 @@ document.onkeydown = function(e) {
     console.log(camera.quaternion);
     switch (e.keyCode) {
         case 37: // Left arrow
-            tweenYRotation(0.3);
+            tweenYRotation(0.25*Math.PI);
             break;
         case 39: // Right arrow
-            tweenYRotation(-0.3);
+            tweenYRotation(-0.25*Math.PI);
             break;
         case 38: // Up arrow
             camera.translateZ(-0.5);
@@ -83,17 +83,11 @@ document.onkeydown = function(e) {
 
 // Tweening rotation
 function tweenYRotation(deltaY) {
-    var targetRotation = new THREE.Euler();
-    targetRotation.set(0, camera.rotation.y + deltaY, 0);
 
     (function() {
-        var qSource = new THREE.Quaternion().copy(camera.quaternion);
-        var qTarget = new THREE.Quaternion().setFromEuler(targetRotation);
-        var q = new THREE.Quaternion();
-        var params = {t: 0};
-        new TWEEN.Tween(params).to({t: 1}, 300).onUpdate(function () {
-            THREE.Quaternion.slerp(qSource, qTarget, q, params.t);
-            camera.quaternion.set(q.x, q.y, q.z, q.w);
+        var params = {y: camera.rotation.y};
+        new TWEEN.Tween(params).to({y: camera.rotation.y + deltaY}, 300).onUpdate(function () {
+            camera.rotation.y = params.y;
         }).start();
     }).call(this);
 }
