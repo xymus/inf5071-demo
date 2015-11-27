@@ -67,10 +67,10 @@ document.onkeydown = function(e) {
             tweenYRotation(-0.25*Math.PI);
             break;
         case 38: // Up arrow
-            camera.translateZ(-0.5);
+            tweenZMove(-3.0);
             break;
         case 40: // Down arrow
-            camera.translateZ(0.5);
+            tweenZMove(3.0);
             break;
         case 85: // U key
             camera.position.y += 0.5;
@@ -80,6 +80,19 @@ document.onkeydown = function(e) {
             break;
     }
 };
+
+// Tweening move
+function tweenZMove(deltaZ) {
+    (function() {
+        var params = {t: 0};
+        var prevD = 0.0;
+        new TWEEN.Tween(params).to({t: 1}, 300).onUpdate(function () {
+            var d = params.t - prevD;
+            prevD = params.t;
+            camera.translateZ(deltaZ*d);
+        }).start();
+    }).call(this);
+}
 
 // Tweening rotation
 function tweenYRotation(deltaY) {
