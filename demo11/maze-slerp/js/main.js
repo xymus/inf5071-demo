@@ -21,7 +21,7 @@ function initializeScene(){
     // Initialisation de la scène et de la caméra
     scene = new THREE.Scene(); 
     camera = new THREE.PerspectiveCamera(45, canvasWidth / canvasHeight, 0.1, 100); 
-    camera.position.set(0, 0.5, 0); 
+    camera.position.set(0, 2.0, 0); 
     camera.up = new THREE.Vector3(0, 2, 0);
     scene.add(camera); 
 
